@@ -32,6 +32,7 @@ function preload ()
 }
 
 var platforms;
+var cursors;
 
 function create ()
 // Game objects live here.
@@ -76,9 +77,36 @@ function create ()
         repeat: -1
     });
 
+    cursors = this.input.keyboard.createCursorKeys(); //Phaser uses this to eliminate the need for event listeners.
+    // The rest of the instructions for moving will be in the update function.
+
     this.physics.add.collider(player, platforms); //keeps Dude from falling through the ground. Super important.
 }
 
 function update ()
+{ // in which I try to explain movement.
+
+    if (cursors.left.isDown) // if the left cursor button is pressed
 {
+    player.setVelocityX(-160); // Dude moves at 160px/sec on the x axis, to the left.
+
+    player.anims.play('left', true); // This sets which images from the sprite sheet get used, from the Create function
+}
+else if (cursors.right.isDown) // This statement is the exact opposite of the one for left.
+{
+    player.setVelocityX(160);
+
+    player.anims.play('right', true);
+}
+else
+{
+    player.setVelocityX(0); // This stops Dude when the user releases the key.
+
+    player.anims.play('turn');
+}
+
+if (cursors.up.isDown && player.body.touching.down) // If up cursor is pressed AND Dude is on the ground...
+{
+    player.setVelocityY(-330); // Dude moves 330px/sec upward on his y axis. AKA, he jumps.
+}
 }
