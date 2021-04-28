@@ -2,3 +2,14 @@ canvas {
   border: 1px solid #d3d3d3;
   background-color: #f1f1f1;
 }
+
+@keyframes jump{
+  0%{top: 150px;}
+  30%{top: 100px;}
+  70%{top: 100px;}
+  100%{top: 150px;}
+}
+
+.animate{
+  animation: jump 300ms linear;
+}

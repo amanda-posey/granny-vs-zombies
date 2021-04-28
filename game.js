@@ -77,6 +77,7 @@ function updateGameArea() {
     myGamePiece.update();
 }
 
+
 // function move(dir) {
 //     myGamePiece.image.src = "angry.gif";
 //     if (dir == "up") {myGamePiece.speedY = -1; }
