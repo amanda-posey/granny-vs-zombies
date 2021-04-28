@@ -77,6 +77,16 @@ function updateGameArea() {
     myGamePiece.update();
 }
 
+document.addEventListener("click",jump);
+function jump(){
+    if(myGamePiece.classList == "animate"){return;}
+    console.log(myGamePiece.classList)
+    myGamePiece.classList.add("animate");
+    setTimeout(removeJump,300); //300ms = length of animation
+};
+function removeJump(){
+    myGamePiece.classList.remove("animate");
+}
 
 // function move(dir) {
 //     myGamePiece.image.src = "angry.gif";
