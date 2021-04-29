@@ -3,7 +3,7 @@ canvas {
   background-color: #f1f1f1;
 }
 
-@keyframes jump{
+/* @keyframes jump{
   0%{top: 150px;}
   30%{top: 100px;}
   70%{top: 100px;}
@@ -12,4 +12,4 @@ canvas {
 
 .animate{
   animation: jump 300ms linear;
-}
+} */
