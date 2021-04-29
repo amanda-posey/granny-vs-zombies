@@ -1,13 +1,13 @@
 var myGamePiece;
 var myBackground;
-var obstacle;
+var myObstacles = [];
 var score;
 
 
 function startGame() {
     myGamePiece = new component(150, 150, "assets/granny.png", 10, 240, "image", 3, false, false);
     myBackground = new component(800, 500, "assets/bg.png", 0, 0, "background", 0, false, true);
-    obstacle = new component(100, 125, "assets/zombie.png", 300, 120, "background")
+//    obstacle = new component(100, 125, "assets/zombie.png", 300, 240, "background", 0, false, true);
     
     myGameArea.start();
 }
@@ -85,34 +85,63 @@ function component(width, height, color, x, y, type, speed, jumping, grounded) {
       }   
 }
 
+this.crashWith = function(otherobj) {
+    var myleft = this.x;
+    var myright = this.x + (this.width);
+    var mytop = this.y;
+    var mybottom = this.y + (this.height);
+    var otherleft = otherobj.x;
+    var otherright = otherobj.x + (otherobj.width);
+    var othertop = otherobj.y;
+    var otherbottom = otherobj.y + (otherobj.height);
+    var crash = true;
+    if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+        crash = false;
+    }
+    return crash;
+}
+
 function updateGameArea() {
+    var x, y;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+            myGameArea.stop();
+            return;
+        }
+    }
     myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        y = myGameArea.canvas.height - 200;
+        myObstacles.push(new component(100, 200, "assets/zombie.png", x, y, "image"));
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+        myObstacles[i].x += -1;
+        myObstacles[i].update();
+    }
     myBackground.speedX = -1;
     myBackground.newPos();    
     myBackground.update();
     myGamePiece.newPos();    
     myGamePiece.update();
-    obstacle.update();
+    // obstacle.speedX = -1;
+    // obstacle.newPos();
+    // obstacle.update();
 }
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+        return false;
+    
+}
+    
 
 function accelerate(n) {
     myGamePiece.gravity = n
 }
 
-var checkDead = setInterval(function() {
-    let characterTop = parseInt(myGameArea.getComputedStyle(myGamePiece).getPropertyValue("top"));
-    let blockLeft = parseInt(myGameArea.getComputedStyle(obstacle).getPropertyValue("left"));
-    if(blockLeft<20 && blockLeft>-20 && characterTop>=130){
-        obstacle.style.animation = "none";
-        alert("Game Over. score: "+Math.floor(counter/100));
-        counter=0;
-        block.style.animation = "block 1s infinite linear";
-    }else{
-        counter++;
-        document.getElementById("scoreSpan").innerHTML = Math.floor(counter/100);
-    }
-}, 10);
-
+ 
   
 
 // document.addEventListener("click",jump);
