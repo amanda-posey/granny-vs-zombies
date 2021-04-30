@@ -1,10 +1,12 @@
 var myGamePiece;
+var myBackground;
 var myObstacles = [];
-var background = new Image();
-background.src = "assets/bg.png";
+var score;
 
 function startGame() {
     myGamePiece = new component(200, 200, "assets/granny.png", 10, 240, "image", 3, false, false);
+    myBackground = new component(800, 500, "assets/bg.png", 0, 0, "background", false, true);
+    score = new component("30px", "Consolas", "black", 280, 40, "text")
     myGameArea.start();
 }
 
@@ -28,7 +30,7 @@ var myGameArea = {
 
 function component(width, height, color, x, y, type, speed, jumping, grounded) {
     this.type = type;
-    if (type == "image") {
+    if (type == "image" || type == "background") {
         this.image = new Image();
         this.image.src = color;
     }
@@ -45,13 +47,18 @@ function component(width, height, color, x, y, type, speed, jumping, grounded) {
     this.gravitySpeed = 0;      
     this.update = function() {
         ctx = myGameArea.context;
-        //ctx.drawImage(background,0,0, 800, 500);
-        if (type == "image") {
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else if (type == "image" || "background") {
             ctx.drawImage(this.image,
                 this.x,
                 this.y,
                 this.width, this.height);
-        } else {
+        } else if (type == "background") {
+            ctx.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
+          } else {
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     } }
@@ -59,6 +66,11 @@ function component(width, height, color, x, y, type, speed, jumping, grounded) {
         this.gravitySpeed += this.gravity;
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed;
+        if (this.type == "background") {
+            if (this.x == -(this.width)) {
+              this.x = 0;
+            }
+          }
         this.hitBottom();
         if (this.x == (-this.width)) {
             this.x = 0;
@@ -77,10 +89,10 @@ function component(width, height, color, x, y, type, speed, jumping, grounded) {
         var myright = this.x + (this.width);
         var mytop = this.y;
         var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x +10;
-        var otherright = (otherobj.x + otherobj.width) +10;
-        var othertop = otherobj.y +10;
-        var otherbottom = (otherobj.y + otherobj.height) +10;
+        var otherleft = otherobj.x +30;
+        var otherright = (otherobj.x + otherobj.width -30);
+        var othertop = otherobj.y +30;
+        var otherbottom = (otherobj.y + otherobj.height) +30;
         var crash = true;
         if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
             crash = false;
@@ -98,6 +110,9 @@ function updateGameArea() {
         } 
     }
     myGameArea.clear();
+    myBackground.speedX = -1;
+    myBackground.newPos();
+    myBackground.update();
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(500)) {
         x = myGameArea.canvas.width;
@@ -108,6 +123,14 @@ function updateGameArea() {
         myObstacles[i].x += -1;
         myObstacles[i].update();
     }
+    score.text="SCORE: " + myGameArea.frameNo;
+    score.update();
+    myGamePiece.speedX = 0;
+    myGamePiece.speedY = 0;    
+    if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -1; }
+    if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 1; }
+    if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; }
+    if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; }
     myGamePiece.newPos();    
     myGamePiece.update();
 }
@@ -123,4 +146,10 @@ function accelerate(n) {
 function clearmove() {
     myGamePiece.speedX = 0; 
     myGamePiece.speedY = 0; 
+}
+
+function restart() {
+    myGameArea.stop();
+    myGameArea.clear();
+    startGame();
 }

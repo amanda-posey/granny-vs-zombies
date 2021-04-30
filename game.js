@@ -1,65 +1,62 @@
 var myGamePiece;
-var myBackground;
 var myObstacles = [];
-var score;
-
+var myScore;
 
 function startGame() {
-    myGamePiece = new component(150, 150, "assets/granny.png", 10, 240, "image", 3, false, false);
-    myBackground = new component(800, 500, "assets/bg.png", 0, 0, "background", 0, false, true);
-//    obstacle = new component(100, 125, "assets/zombie.png", 300, 240, "background", 0, false, true);
-    
+    myBackground = new component(700, 500, "assets/bg.png", 0, 0, "background")
+    myGamePiece = new component(200, 200, "assets/granny.png", 10, 240, "image");
+    myGamePiece.gravity = 0.05;
+    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
     myGameArea.start();
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 800;
+        this.canvas.width = 700;
         this.canvas.height = 500;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 20);
+        updateGameArea();
         },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    },
-    stop : function() {
-        clearInterval(this.interval);
     }
 }
 
-function component(width, height, color, x, y, type, speed, jumping, grounded) {
+function component(width, height, color, x, y, type) {
     this.type = type;
     if (type == "image" || type == "background") {
         this.image = new Image();
         this.image.src = color;
     }
+    this.score = 0;
     this.width = width;
     this.height = height;
-    this.speed = speed;
     this.speedX = 0;
     this.speedY = 0;    
     this.x = x;
     this.y = y;
-    this.jumping = jumping;
-    this.grounded = grounded;
-    this.gravity = 0.05;
-    this.gravitySpeed = 0;    
+    this.gravity = 0;
+    this.gravitySpeed = 0;
     this.update = function() {
         ctx = myGameArea.context;
         if (type == "image" || type == "background") {
-            ctx.drawImage(this.image, 
-                this.x, 
+            ctx.drawImage(this.image,
+                this.x,
                 this.y,
                 this.width, this.height);
         if (type == "background") {
-            ctx.drawImage(this.image, 
-                this.x + this.width, 
+            ctx.drawImage(this.image,
+                this.x + this.width,
                 this.y,
                 this.width, this.height);
         }
+        } else if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
         } else {
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -69,102 +66,71 @@ function component(width, height, color, x, y, type, speed, jumping, grounded) {
         this.gravitySpeed += this.gravity;
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed;
-        this.hitBottom();
         if (this.type == "background") {
             if (this.x == -(this.width)) {
                 this.x = 0;
             }
         }
-    } 
+        this.hitBottom();
+    }
     this.hitBottom = function() {
         var rockbottom = myGameArea.canvas.height - this.height;
         if (this.y > rockbottom) {
-          this.y = rockbottom;
-          this.gravitySpeed = 0;
+            this.y = rockbottom;
+            this.gravitySpeed = 0;
         }
-      }   
-}
-
-this.crashWith = function(otherobj) {
-    var myleft = this.x;
-    var myright = this.x + (this.width);
-    var mytop = this.y;
-    var mybottom = this.y + (this.height);
-    var otherleft = otherobj.x;
-    var otherright = otherobj.x + (otherobj.width);
-    var othertop = otherobj.y;
-    var otherbottom = otherobj.y + (otherobj.height);
-    var crash = true;
-    if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-        crash = false;
     }
-    return crash;
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
 }
 
 function updateGameArea() {
-    var x, y;
+    //var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
         if (myGamePiece.crashWith(myObstacles[i])) {
-            myGameArea.stop();
             return;
-        }
+        } 
     }
     myGameArea.clear();
+    myBackground.speedX = -1;
+    myBackground.newPos();
+    myBackground.update();
     myGameArea.frameNo += 1;
-    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+    if (myGameArea.frameNo == 1 || everyinterval(500)) {
         x = myGameArea.canvas.width;
-        y = myGameArea.canvas.height - 200;
-        myObstacles.push(new component(100, 200, "assets/zombie.png", x, y, "image"));
+        y = myGameArea.canvas.height - 220;
+        myObstacles.push(new component(100, 150, "assets/zombie.png", x, y));
     }
     for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].x += -1;
         myObstacles[i].update();
     }
-    myBackground.speedX = -1;
-    myBackground.newPos();    
-    myBackground.update();
-    myGamePiece.newPos();    
+    myScore.text="SCORE: " + myGameArea.frameNo;
+    myScore.update();
+    myGamePiece.newPos();
     myGamePiece.update();
-    // obstacle.speedX = -1;
-    // obstacle.newPos();
-    // obstacle.update();
 }
 
 function everyinterval(n) {
     if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
-        return false;
-    
+    return false;
 }
-    
 
 function accelerate(n) {
-    myGamePiece.gravity = n
+    if (!myGameArea.interval) {myGameArea.interval = setInterval(updateGameArea, 20);}
+
+    myGamePiece.gravity = n;
 }
-
- 
-  
-
-// document.addEventListener("click",jump);
-// function jump(){
-//     if(myGamePiece.image.classList == "animate"){return;}
-//     //console.log(myGamePiece);
-//     myGamePiece.image.classList.add("animate");
-//     setTimeout(removeJump,300); //300ms = length of animation
-// };
-// function removeJump(){
-//     myGamePiece.image.classList.remove("animate");
-// }
-
-// function move(dir) {
-//     myGamePiece.image.src = "angry.gif";
-//     if (dir == "up") {myGamePiece.speedY = -1; }
-//     if (dir == "down") {myGamePiece.speedY = 1; }
-//     if (dir == "left") {myGamePiece.speedX = -1; }
-//     if (dir == "right") {myGamePiece.speedX = 1; }
-// }
-
-// function clearmove() {
-//     myGamePiece.image.src = "smiley.gif";
-//     myGamePiece.speedX = 0; 
-//     myGamePiece.speedY = 0; 
-//}

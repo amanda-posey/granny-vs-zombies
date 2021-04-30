@@ -2,13 +2,15 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<script src = "test.js"></script>
+<script src = "game.js"></script>
 <link rel = "stylesheet" href="test.css">
 </head>
 <body onload="startGame()">
     
       <div style="text-align:center;width:480px;">
         <button onmousedown='accelerate(-1)' onmouseup='accelerate(0.5)'>Jump!</button>
+        <button onClick="window.location.reload();">Restart</button>
+        <!-- <button onmousedown="restart()">Restart</button> -->
      </div>
       </body>
       </html>
