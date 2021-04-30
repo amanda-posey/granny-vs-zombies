@@ -85,8 +85,8 @@ function component(width, height, color, x, y, type) {
         var myright = this.x + (this.width);
         var mytop = this.y;
         var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
+        var otherleft = otherobj.x +30;
+        var otherright = otherobj.x -50+ (otherobj.width);
         var othertop = otherobj.y;
         var otherbottom = otherobj.y + (otherobj.height);
         var crash = true;
@@ -105,17 +105,17 @@ function updateGameArea() {
         } 
     }
     myGameArea.clear();
-    myBackground.speedX = -1;
+    myBackground.speedX = -2;
     myBackground.newPos();
     myBackground.update();
     myGameArea.frameNo += 1;
-    if (myGameArea.frameNo == 1 || everyinterval(500)) {
+    if (myGameArea.frameNo == 1 || everyinterval(300)) {
         x = myGameArea.canvas.width;
-        y = myGameArea.canvas.height - 240;
+        y = myGameArea.canvas.height - 150;
         myObstacles.push(new component(100, 150, "assets/zombie.png", x, y, "image"));
     }
     for (i = 0; i < myObstacles.length; i += 1) {
-        myObstacles[i].x += -1;
+        myObstacles[i].x += -2;
         myObstacles[i].update();
     }
     myScore.text="SCORE: " + myGameArea.frameNo;
