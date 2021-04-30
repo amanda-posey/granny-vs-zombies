@@ -111,8 +111,8 @@ function updateGameArea() {
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(500)) {
         x = myGameArea.canvas.width;
-        y = myGameArea.canvas.height - 220;
-        myObstacles.push(new component(100, 150, "assets/zombie.png", x, y));
+        y = myGameArea.canvas.height - 240;
+        myObstacles.push(new component(100, 150, "assets/zombie.png", x, y, "image"));
     }
     for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].x += -1;
