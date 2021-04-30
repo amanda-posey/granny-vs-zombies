@@ -1,13 +1,13 @@
-# Title of Game
+# Grannies vs Zombies
 
-Explanation of the game that was built and the deployed link will go here.
+The zombie apocalypse is upon us, but Edna still needs to get home in time to watch her stories. Help Edna jump over the zombies and stay alive.
 
 # HOW TO PLAY
 
-How to play the game goes here
+Click the Jump button to begin your game, and again to lift Edna up and over the zombies. Other games might have you jump, but this odd floating thing she does is absolutely a feature. If the zombies prevail, click Restart to reload the page and start the fun all over again.
 
 ## Start Up Screen:
-Images of the start up screen go here 
+![Edna](/assets/granny.png) ![A zombie](/assets/zombie.png)
 
 # HOW TO INSTALL
 
@@ -16,24 +16,35 @@ Images of the start up screen go here
 2. Open `index.html` in your browser to play or 
 3. Open the directory in your text editor of choice to view or edit the code
 
-Other install instructions will go here
-
-
 # HOW IT WORKS
-How the game works will go here
-Code snippets go here
+All new components are created with a factory function, keeping everything neat.
 
+```
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    if (type == "image" || type == "background") {
+        this.image = new Image();
+        this.image.src = color;
+    }
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    this.gravitySpeed = 0;
+ ```
+ The score is maintained simply by counting the number of frames you've survived through:
+ 
+ ```
+ myScore.text="SCORE: " + myGameArea.frameNo;
+    myScore.update();
+ ```
 
 # FUTURE CONSIDERATIONS
 
-Future considerations or stretch goals go here.
+I'd really like to fine-tune my jump code, as well as add varied zombie sprites.
 
 
-# PROCESS WORK
-
-## Initial Wireframes:
-Initial Wireframes go here ( images )
-
-## Scratch Work:
-
-Scratch Work goes here
